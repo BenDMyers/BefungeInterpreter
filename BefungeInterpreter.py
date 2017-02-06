@@ -1,19 +1,19 @@
 from random import randint
 import os.path
 import sys
-import time
 
-grid = []
-x = 0
-y = 0
-direction = "right"
-stack = []
-directions = ["right", "left", "up", "down"]
-inQuotes = False;
+# GLOBAL VARIABLES
+grid = [] # BEFUNGE GRID
+x = 0 # X COORDINATE OF POINTER
+y = 0 # Y COORDINATE OF POINTER
+direction = "right" # CURRENT DIRECTION OF MOTION
+stack = [] # LIFO NUMBER STORAGE
+directions = ["right", "left", "up", "down"] # ALL POSSIBLE DIRECTIONS
+inQuotes = False; # WHETHER WE'RE IN STRING MODE
 
+# RUN PROGRAM
 def main():
     grid = readFile()
-    # printGrid(grid)
     while grid[y][x] != "@":
         step()
 
@@ -70,9 +70,10 @@ def step():
     move()
     # time.sleep(0.5)
 
+# PROCESSES THE CURRENT INSTRUCTION
 def processInstruction(instruction):
-    # print instruction
     global direction
+
     # STRING MODE
     global inQuotes
     if inQuotes == True and instruction != "\"":
@@ -169,6 +170,7 @@ def processInstruction(instruction):
     elif instruction == "~": # PUSH ASCII VALUE OF USER-GIVEN CHARACTER
         stack.append(ord(input("Enter a character: ")))
 
+# MOVES THE POINTER
 def move():
     global x
     global y
@@ -189,8 +191,6 @@ def move():
         y += len(grid)
     elif y == len(grid):
         y = 0
-
-    # print stack
 
 # ACTUALLY RUN THE STUFF
 main()
