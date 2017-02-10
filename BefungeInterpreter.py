@@ -81,7 +81,18 @@ def processInstruction(instruction):
         return
 
     # NOT STRING MODE
-    if instruction.isdigit(): # IF IT'S A DIGIT, POP THAT DIGIT ONTO THE STACK
+    if instruction == " ":
+        # NO-OP -- PLACED FIRST FOR OPTIMIZATION
+        pass
+    elif instruction == ">": # START MOVING RIGHT
+        direction = "right"
+    elif instruction == "<": # START MOVING LEFT
+        direction = "left"
+    elif instruction == "^": # START MOVING UP
+        direction = "up"
+    elif instruction == "v": # START MOVING DOWN
+        direction = "down"
+    elif instruction.isdigit(): # IF IT'S A DIGIT, POP THAT DIGIT ONTO THE STACK
         stack.append(int(instruction))
     elif instruction == "+": # ADDITION
         a = stack.pop()
@@ -116,14 +127,6 @@ def processInstruction(instruction):
             stack.append(1)
         else:
             stack.append(0)
-    elif instruction == ">": # START MOVING RIGHT
-        direction = "right"
-    elif instruction == "<": # START MOVING LEFT
-        direction = "left"
-    elif instruction == "^": # START MOVING UP
-        direction = "up"
-    elif instruction == "v": # START MOVING DOWN
-        direction = "down"
     elif instruction == "?": # START MOVING IN A RANDOM CARDINAL DIRECTION
         rand = randint(0, 3)
         direction = directions[rand]
