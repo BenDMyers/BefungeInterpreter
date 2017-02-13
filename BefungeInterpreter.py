@@ -11,14 +11,14 @@ stack = [] # LIFO NUMBER STORAGE
 directions = ["right", "left", "up", "down"] # ALL POSSIBLE DIRECTIONS
 inQuotes = False; # WHETHER WE'RE IN STRING MODE
 
-# RUN PROGRAM
 def main():
+    """Read file and repeatedly traverse grid"""
     grid = readFile()
     while grid[y][x] != "@":
         step()
 
-# READS THE FILE AND STORES BEFUNGE GRID
 def readFile():
+    """Read the file at the first commandline argument and griddify it"""
     # CONFIRM A FILENAME WAS GIVEN
     if len(sys.argv) < 2:
         print "ERROR: No input file specified!"
@@ -57,124 +57,161 @@ def readFile():
 
     return grid
 
-# PRINTS THE CONTENTS OF A GIVEN GRID -- useful for debugging
 def printGrid(grid):
+    """
+    Print the contents of a given grid into the terminal
+        Useful for debugging
+
+    Keyword arguments:
+    grid -- the grid to print out
+    """
     for row in grid:
         for col in row:
             print col,
         print
 
-# ADVANCES BEFUNGE GRID ONE STEP
 def step():
+    """Advance the Befunge grid one step"""
     processInstruction(grid[y][x])
     move()
-    # time.sleep(0.5)
 
-# PROCESSES THE CURRENT INSTRUCTION
 def processInstruction(instruction):
+    """
+    Process the instruction that's currently being pointed to
+
+    Keyword arguments:
+    instruction -- string representation of the current instruction
+    """
+
     global direction
 
-    # STRING MODE
+    # IN STRING MODE
     global inQuotes
     if inQuotes == True and instruction != "\"":
         stack.append(ord(instruction))
         return
 
-    # NOT STRING MODE
+    # NOT IN STRING MODE
     if instruction == " ":
         # NO-OP -- PLACED FIRST FOR OPTIMIZATION
         pass
-    elif instruction == ">": # START MOVING RIGHT
+    elif instruction == ">":
+        # START MOVING RIGHT
         direction = "right"
-    elif instruction == "<": # START MOVING LEFT
+    elif instruction == "<":
+        # START MOVING LEFT
         direction = "left"
-    elif instruction == "^": # START MOVING UP
+    elif instruction == "^":
+        # START MOVING UP
         direction = "up"
-    elif instruction == "v": # START MOVING DOWN
+    elif instruction == "v":
+        # START MOVING DOWN
         direction = "down"
-    elif instruction.isdigit(): # IF IT'S A DIGIT, POP THAT DIGIT ONTO THE STACK
+    elif instruction.isdigit():
+        # IF IT'S A DIGIT, POP THAT DIGIT ONTO THE STACK
         stack.append(int(instruction))
-    elif instruction == "+": # ADDITION
+    elif instruction == "+":
+        # ADDITION
         a = stack.pop()
         b = stack.pop()
         stack.append(a+b)
-    elif instruction == "-": # SUBTRACTION
+    elif instruction == "-":
+        # SUBTRACTION (b-a)
         a = stack.pop()
         b = stack.pop()
         stack.append(b-a)
-    elif instruction == "*": # MULTIPLICATION
+    elif instruction == "*":
+        # MULTIPLICATION
         a = stack.pop()
         b = stack.pop()
         stack.append(a*b)
-    elif instruction == "/": # INT DIVISION
+    elif instruction == "/":
+        # INT DIVISION (b/a)
         a = stack.pop()
         b = stack.pop()
         stack.append(b//a)
-    elif instruction == "%": # MODULO
+    elif instruction == "%":
+        # MODULO (b%a)
         a = stack.pop()
         b = stack.pop()
         stack.append(b%a)
-    elif instruction == "!": # LOGICAL NOT
+    elif instruction == "!":
+        # LOGICAL NOT
         value = stack.pop()
         if value == 0:
             stack.append(1)
         else:
             stack.append(0)
-    elif instruction == "`": # GREATER THAN
+    elif instruction == "`":
+        # GREATER THAN (b>a)
         a = stack.pop()
         b = stack.pop()
         if b > a:
             stack.append(1)
         else:
             stack.append(0)
-    elif instruction == "?": # START MOVING IN A RANDOM CARDINAL DIRECTION
+    elif instruction == "?":
+        # START MOVING IN A RANDOM CARDINAL DIRECTION
         rand = randint(0, 3)
         direction = directions[rand]
-    elif instruction == "_": # POP; RIGHT IF 0, LEFT OTHERWISE
+    elif instruction == "_":
+        # POP; RIGHT IF 0, LEFT OTHERWISE
         value = stack.pop()
         if value == 0:
             direction = "right"
         else:
             direction = "left"
-    elif instruction == "|": # POP; DOWN IF 0, UP OTHERWISE
+    elif instruction == "|":
+        # POP; DOWN IF 0, UP OTHERWISE
         value = stack.pop()
         if value == 0:
             direction = "down"
         else:
             direction = "up"
-    elif instruction == "\"": # TOGGLE STRING MODE
+    elif instruction == "\"":
+        # TOGGLE STRING MODE
         inQuotes = not inQuotes
-    elif instruction == ":": # DUPLICATE VALUE ON TOP OF STACK
+    elif instruction == ":":
+        # DUPLICATE VALUE ON TOP OF STACK
         stack.append(stack[-1])
-    elif instruction == "\\": # SWAP TWO VALUES ON TOP OF STACK
+    elif instruction == "\\":
+        # SWAP TWO VALUES ON TOP OF STACK
         a = stack.pop()
         b = stack.pop()
         stack.append(a)
         stack.append(b)
-    elif instruction == "$": # POP TOP AND DISCARD
+    elif instruction == "$":
+        # POP TOP AND DISCARD
         stack.pop()
-    elif instruction == ".": # POP AND OUTPUT AS INTEGER FOLLOWED BY SPACE
+    elif instruction == ".":
+        # POP AND OUTPUT AS INTEGER FOLLOWED BY SPACE
         print stack.pop(), " ",
-    elif instruction == ",": # POP AND OUTPUT AS ASCII CHARACTER
+    elif instruction == ",":
+         POP AND OUTPUT AS ASCII CHARACTER
         print chr(stack.pop()),
-    elif instruction == "#": # BRIDGE -- SKIP NEXT CELL
+    elif instruction == "#":
+        # BRIDGE -- SKIP NEXT CELL
         move()
-    elif instruction == "p": # PUT -- POP Y, X, AND V, THEN SET (X,Y) TO V
+    elif instruction == "p":
+        # PUT -- POP Y, X, AND V, THEN SET (X,Y) TO V
         y = stack.pop()
         x = stack.pop()
         v = stack.pop()
         grid[y][x] = chr(v)
-    elif instruction == "g": # GET -- POP Y AND X, THEN PUSH ASCII VALUE AT (X,Y)
+    elif instruction == "g":
+        # GET -- POP Y AND X, THEN PUSH ASCII VALUE AT (X,Y)
         y = stack.pop()
         x = stack.pop()
         stack.append(ord(grid[y][x]))
-    elif instruction == "&": # PUSH USER-GIVEN NUMBER
+    elif instruction == "&":
+        # PUSH USER-GIVEN NUMBER
         stack.append(int(input("Enter a number: ")))
-    elif instruction == "~": # PUSH ASCII VALUE OF USER-GIVEN CHARACTER
+    elif instruction == "~":
+        # PUSH ASCII VALUE OF USER-GIVEN CHARACTER
         stack.append(ord(input("Enter a character: ")))
 
-# MOVES THE POINTER
 def move():
+    """Move the pointer in the current direction"""
     global x
     global y
     if direction == "right":
@@ -195,5 +232,4 @@ def move():
     elif y == len(grid):
         y = 0
 
-# ACTUALLY RUN THE STUFF
 main()
