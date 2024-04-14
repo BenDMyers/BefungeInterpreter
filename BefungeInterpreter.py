@@ -187,7 +187,7 @@ def processInstruction(instruction):
         # POP AND OUTPUT AS INTEGER FOLLOWED BY SPACE
         print stack.pop(), " ",
     elif instruction == ",":
-         POP AND OUTPUT AS ASCII CHARACTER
+        # POP AND OUTPUT AS ASCII CHARACTER
         print chr(stack.pop()),
     elif instruction == "#":
         # BRIDGE -- SKIP NEXT CELL
